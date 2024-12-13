@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
-import 'dart:async';
+import 'package:google_fonts/google_fonts.dart';
+import 'stopwatch_screen.dart';
+import 'about_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,123 +12,94 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Enhanced Stopwatch',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const StopwatchScreen(),
+      home: HomePage(),
     );
   }
 }
 
-class StopwatchScreen extends StatefulWidget {
-  const StopwatchScreen({super.key});
-
-  @override
-  State<StopwatchScreen> createState() => _StopwatchScreenState();
-}
-
-class _StopwatchScreenState extends State<StopwatchScreen> {
-  final Stopwatch _stopwatch = Stopwatch();
-  Timer? _timer;
-  String _elapsedTime = "00:00:00";
-
-  void _startStopwatch() {
-    if (!_stopwatch.isRunning) {
-      _stopwatch.start();
-      _timer = Timer.periodic(const Duration(milliseconds: 100), _updateTime);
-    }
-  }
-
-  void _stopStopwatch() {
-    if (_stopwatch.isRunning) {
-      _stopwatch.stop();
-      _timer?.cancel();
-    }
-  }
-
-  void _resetStopwatch() {
-    _stopwatch.reset();
-    _updateTime(null);
-  }
-
-  void _updateTime(Timer? timer) {
-    final int milliseconds = _stopwatch.elapsedMilliseconds;
-    final int hundreds = (milliseconds / 10).truncate();
-    final int seconds = (hundreds / 100).truncate();
-    final int minutes = (seconds / 60).truncate();
-
-    setState(() {
-      _elapsedTime =
-          "${minutes.toString().padLeft(2, '0')} : ${(seconds % 60).toString().padLeft(2, '0')} : ${(hundreds % 100).toString().padLeft(2, '0')}";
-    });
-  }
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: const Text(
-          "Enhanced Stopwatch",
-          style: TextStyle(
-            color: Colors.white,
+        title: Text(
+          'Home Page',
+          style: GoogleFonts.roboto(
             fontWeight: FontWeight.bold,
+            fontSize: 22,
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
-        elevation: 4,
+        backgroundColor: Colors.deepPurple,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularPercentIndicator(
-              radius: 120.0,
-              lineWidth: 13.0,
-              percent:
-                  (_stopwatch.elapsedMilliseconds % 60000 / 60000).toDouble(),
-              center: Text(
-                _elapsedTime,
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Text(
+              'Welcome to Enhanced Stopwatch!',
+              style: GoogleFonts.pacifico(
+                fontSize: 24,
+                color: Colors.deepPurple,
               ),
-              progressColor: Colors.blue,
-              backgroundColor: Colors.grey.shade300,
+              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                FloatingActionButton(
-                  onPressed: _startStopwatch,
-                  backgroundColor: Colors.green,
-                  child: const Icon(Icons.play_arrow),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const StopwatchScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                textStyle: GoogleFonts.roboto(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-                FloatingActionButton(
-                  onPressed: _stopStopwatch,
-                  backgroundColor: Colors.red,
-                  child: const Icon(Icons.stop),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                FloatingActionButton(
-                  onPressed: _resetStopwatch,
-                  backgroundColor: Colors.blue,
-                  child: const Icon(Icons.refresh),
+              ),
+              child: const Text('Go to Stopwatch'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AboutScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                textStyle: GoogleFonts.roboto(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text('About the App'),
             ),
           ],
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
   }
 }
